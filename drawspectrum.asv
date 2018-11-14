@@ -1,20 +1,19 @@
 clear
-[sidetest,fs_origin] = audioread('..\data\20181009(SC VOWEL CLEAN)\SC_350_clean.wav');
+[sidetest,fs_origin] = audioread('..\data\20181009(SC VOWEL CLEAN)\SC_500_clean.wav');
 fs = 16000;
 vowel_resample=resample(sidetest,fs,fs_origin);
 % vowel_filtered=filter([1,-0.99],[1],vowel_resample);
-vowel_filtered=filter([1,-0.99],[1],vowel_resample);
 
-Nframe = 640;
+Nframe = 480;
 Nfft = Nframe*4;
 nstart = 15000;
 
 axis_length = 8000/(fs/Nfft);
-M =90
+M =60
 friency_axis = (1:axis_length);
 friency_axis = friency_axis(:)*(fs/Nfft);
 
-spectrum = getspectrum(vowel_filtered,Nframe,Nfft,fs,nstart);
+spectrum = getspectrum(vowel_resample,Nframe,Nfft,fs,nstart);
 spectrum_show = spectrum(1:axis_length)';
 
 [envelope,cepstrum]=getcepstrum(spectrum,M);
@@ -23,7 +22,7 @@ envelope_show = envelope(1:axis_length)';
 val = val(:)*(fs/Nfft);
 
 
-[ceps_base,E] = imai_base(spectrum,M,5);
+[ceps_base,E] = imai_base(spectrum,M,2);
 ceps_base_show = ceps_base(1:axis_length)';
 E_show = E(1:axis_length);
 [b_loc,b_val] = findpeaks(ceps_base_show);

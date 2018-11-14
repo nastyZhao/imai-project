@@ -10,7 +10,7 @@ Nfft = Nframe*4;
 nstart = 15000;
 
 axis_length = 8000/(fs/Nfft);
-M =40;
+M =100;
 
 friency_axis = (1:axis_length);
 friency_axis = friency_axis(:)*(fs/Nfft);
@@ -60,7 +60,7 @@ envelope_show = envelope(1:axis_length)';
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-wzp_base = [y1,zeros(1,Nfft-nw), y2];
+wzp_base = [y3,zeros(1,Nfft-nw), y4];
 Ehat=zeros(1,Nfft)';
 V=envelope';%µ¹Æ×
 E=max(spectrum-V,0);
