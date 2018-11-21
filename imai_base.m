@@ -46,7 +46,7 @@ winrec = boxcar(nw)';
 wflattop = flattopwin(nw)';
 wturkey = tukeywin(nw,0.75)';
 
-% y1 = trapmf(1:1:(nw+1)/2,[1 1 (nw+1)/4 (nw+1)/2]);
+% y1 = trapmf(1:1:(nw+1)/2,[1 1 10 (nw+1)/2]);
 % y2 = trapmf(1:1:(nw-1)/2,[1 1 (nw-1)/4 (nw-1)/2]);
 
 y1 = winblac(((nw+1)/2):nw);
