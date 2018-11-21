@@ -1,5 +1,5 @@
 clear
-[sidetest,fs_origin] = audioread('..\data\20181009(SC VOWEL CLEAN)\SC_350_clean.wav');
+[sidetest,fs_origin] = audioread('..\data\20180828(CR vowel a test)\CR_a_550Hz.wav');
 fs = 16000;
 vowel_resample=resample(sidetest,fs,fs_origin);
 % vowel_filtered=filter([1,-0.99],[1],vowel_resample);
@@ -7,10 +7,10 @@ vowel_filtered=filter([1,-0.99],[1],vowel_resample);
 
 Nframe = 640;
 Nfft = Nframe*4;
-nstart = 15000;
+nstart = 10000;
 
 axis_length = 8000/(fs/Nfft);
-M =90
+M =100
 friency_axis = (1:axis_length);
 friency_axis = friency_axis(:)*(fs/Nfft);
 
