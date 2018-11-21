@@ -1,11 +1,13 @@
 clear
-[sidetest,fs_origin] = audioread('..\data\20180828(CR vowel a test)\CR_a_550Hz.wav');
+
+[sidetest,fs_origin] = audioread('..\data\20181009(SC VOWEL CLEAN)\SC_650_clean.wav');
+
 fs = 16000;
 vowel_resample=resample(sidetest,fs,fs_origin);
-% vowel_filtered=filter([1,-0.99],[1],vowel_resample);
 vowel_filtered=filter([1,-0.99],[1],vowel_resample);
+% vowel_filtered=filter([1,-0.99],[1],vowel_resample);
 
-Nframe = 640;
+Nframe = 480;
 Nfft = Nframe*4;
 nstart = 10000;
 
@@ -23,7 +25,7 @@ envelope_show = envelope(1:axis_length)';
 val = val(:)*(fs/Nfft);
 
 
-[ceps_base,E] = imai_base(spectrum,M,5);
+[ceps_base,E] = imai_base(spectrum,M,6);
 ceps_base_show = ceps_base(1:axis_length)';
 E_show = E(1:axis_length);
 [b_loc,b_val] = findpeaks(ceps_base_show);
@@ -57,12 +59,12 @@ hold off
 % hold off
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-CepstrumResult = table(val);
-CepstrumResult.Properties.VariableNames = {'Cepstrum_Result'};
-writetable(CepstrumResult, 'CepstrumResult_130Hz_CR.csv')
-
-NewMethodResult = table(b_val);
-NewMethodResult.Properties.VariableNames = {'NewMethod_Result'};
-writetable(NewMethodResult, 'NewMethodResult_130Hz_CR.csv')
+% CepstrumResult = table(val);
+% CepstrumResult.Properties.VariableNames = {'Cepstrum_Result'};
+% writetable(CepstrumResult, 'CepstrumResult_130Hz_CR.csv')
+% 
+% NewMethodResult = table(b_val);
+% NewMethodResult.Properties.VariableNames = {'NewMethod_Result'};
+% writetable(NewMethodResult, 'NewMethodResult_130Hz_CR.csv')
 
 
