@@ -1,5 +1,5 @@
 clear
-[sidetest,fs_origin] = audioread('..\data\20181009(SC VOWEL CLEAN)\SC_750_clean.wav');
+[sidetest,fs_origin] = audioread('..\data\20181009(SC VOWEL CLEAN)\SC_600_clean.wav');
 fs = 16000;
 vowel_resample=resample(sidetest,fs,fs_origin);
 vowel_filtered=filter([1,-0.99],[1],vowel_resample);
@@ -21,7 +21,7 @@ Nfft=max(size(spectrum));
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %lifter order setting%
-M =21;
+M =20;
 nw = 2*M-4; % almost 1 period left and right
 if floor(nw/2) == nw/2, nw=nw-1; end; % make it odd
 
@@ -58,7 +58,7 @@ envelope_show = envelope(1:axis_length)';
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-remove_lifter_order = 20;
+remove_lifter_order = 25;
 nr = 2*remove_lifter_order-4; % almost 1 period left and right
 if floor(nr/2) == nr/2, nr=nr-1; end; % make it odd
 remove_lifter_window = boxcar(nr)';
@@ -76,7 +76,7 @@ wzp_env_getter = [env_lifter_window(((ne+1)/2):ne),zeros(1,Nfft-ne),...
 cep_hr_liftered = wzp_harmonic_remover.*real(ifft(spectrum'));
 V=real(fft(cep_hr_liftered))';%µ¹Æ×
 
-nIter = 3;
+nIter = 1;
 for i=1:nIter
     for j=1:Nfft
         if V(j)>spectrum(j)
@@ -89,7 +89,7 @@ for i=1:nIter
     if i==nIter
         c=wzp_env_getter.*real(ifft(E));
     else
-        Iter_order = remove_lifter_order+1*i;
+        Iter_order = remove_lifter_order+1;
         ni = 2*Iter_order-4; % almost 1 period left and right
         if floor(ni/2) == ni/2, ni=ni-1; end; % make it odd
         remove_lifter_window = boxcar(ni)';
@@ -111,7 +111,7 @@ plot(friency_axis,spectrum_show,'color',[96 96 96]/255);
 % plot(cepstrum(1:Nfft/10),'color',[96 96 96]/255);
 hold on
 % plot(friency_axis,envelope_show,'k','LineWidth',2.0);
-% plot(friency_axis,base_observer,'k','LineWidth',2.0);
+plot(friency_axis,base_observer,'k','LineWidth',2.0);
 plot(friency_axis,ceps_base_show,'r','LineWidth',2.0);
 scatter(base_val,base_loc,'k');
 % plot(y1,'r','LineWidth',2.0);
