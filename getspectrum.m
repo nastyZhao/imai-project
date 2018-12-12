@@ -7,7 +7,7 @@ winham = window(@hamming,Nframe);
 winrec = boxcar(Nframe);
 x_windowed = winblac.* x_windowed;
 
-spectrum_x = 20*log10(abs(fft(x_windowed,Nfft)));
+spectrum_x = 10*log(abs(fft(x_windowed,Nfft)));
 % spectrum_x = spectrum_x_o(1:3000/(fs/Nfft));
 
 friency_axis = (1:6000/(fs/Nfft));
