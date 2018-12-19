@@ -1,5 +1,5 @@
 clear
-[sidetest,fs_origin] = audioread('..\data\20180828(CR vowel a test)\CR_a_700Hz.wav');
+[sidetest,fs_origin] = audioread('..\data\20180828(CR vowel a test)\CR_a_750Hz.wav');
 fs = 16000;
 vowel_resample=resample(sidetest,fs,fs_origin);
 vowel_filtered=filter([1,-0.99],[1],vowel_resample);
@@ -7,7 +7,7 @@ vowel_filtered=filter([1,-0.99],[1],vowel_resample);
 %FFT paramaters setting%
 Nframe = 512;
 Nfft = Nframe*4;
-nstart = 10000;
+nstart = 15000;
 
 %axis scaling%
 axis_length = 8000/(fs/Nfft);
@@ -76,7 +76,7 @@ wzp_env_getter = [env_lifter_window(((ne+1)/2):ne),zeros(1,Nfft-ne),...
 cep_hr_liftered = wzp_harmonic_remover.*real(ifft(spectrum'));
 V=real(fft(cep_hr_liftered))';%µ¹Æ×
 
-nIter = 3;
+nIter = 4;
 
 figure(2);
 plot(friency_axis,spectrum_show,'color',[96 96 96]/255);
@@ -91,19 +91,19 @@ for i=1:nIter
         end
     end
     base_observer = E(1:axis_length);
-%     if i==nIter
-%         c=wzp_env_getter.*real(ifft(E));
-%     else
-        Iter_order = remove_lifter_order+i*50;
+    if i==nIter
+        c=wzp_env_getter.*real(ifft(E));
+    else
+        Iter_order = remove_lifter_order*2*i;
         ni = 2*Iter_order-4; % almost 1 period left and right
         if floor(ni/2) == ni/2, ni=ni-1; end; % make it odd
-        remove_lifter_window = window(@blackman,ni)';
+        remove_lifter_window = boxcar(ni)';
         wzp_Iter = [remove_lifter_window(((ni+1)/2):ni),zeros(1,Nfft-ni),...
             remove_lifter_window(1:(ni-1)/2)];
         c=wzp_Iter.*real(ifft(E));
         Y = real(fft(c));
         plot(friency_axis,Y(1:axis_length),'LineWidth',2.0);
-%     end
+    end
     V=real(fft(c));
 end
 ceps_base = V(:);
