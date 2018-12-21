@@ -104,6 +104,25 @@ error_old_750= 100*abs(old_750 - truth)./truth;
 error_new_750 =100*abs(new_750 - truth)./truth;
 % error_LPC_750 = 100*abs(LPC_750 - L_truth)./L_truth;
 
+A_old =  [old_130,old_200,old_250,old_300,old_350,old_400,old_450,...
+    old_500,old_550,old_600,old_650,old_700,old_750];
+CepstrumResult = table(A_old);
+% writetable(CepstrumResult,'CepstrumResult.csv');
+
+A_new = [new_130,new_200,new_250,new_300,new_350,new_400,new_450,...
+    new_500,new_550,new_600,new_650,new_700,new_750];
+BaseResult = table(A_new);
+% writetable(BaseResult,'BaseResult.csv');
+
+aa = table2array(readtable('CepstrumResult.csv'));
+bb = table2array(readtable('BaseResult.csv'));
+[m,n] = size(aa);
+for i=1:1:n
+    a(:,i) = 100*abs(aa(:,i) - truth)./truth;
+    b(:,i) = 100*abs(bb(:,i) - truth)./truth;
+end
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 F1_error_old = [error_old_130(1),error_old_200(1),error_old_250(1),error_old_300(1),error_old_350(1),error_old_400(1),error_old_450(1),error_old_500(1),error_old_550(1),error_old_600(1),error_old_650(1),error_old_700(1),error_old_750(1)];
 F1_error_new = [error_new_130(1),error_new_200(1),error_new_250(1),error_new_300(1),error_new_350(1),error_new_400(1),error_new_450(1),error_new_500(1),error_new_550(1),error_new_600(1),error_new_650(1),error_new_700(1),error_new_750(1)];
@@ -133,61 +152,61 @@ pitch_ax=[130,200,250,300,350,400,450,500,550,600,650,700,750];
 
 figure(1)
 ax1 = subplot(2,1,1); 
-plot(ax1,pitch_ax,F1_error_old,'-o','LineWidth',2.0);
+plot(ax1,pitch_ax,a(1,:),'-o','LineWidth',2.0);
 % plot(ax1,pitch_ax,F1_error_LPC,'-o','LineWidth',2.0);
 hold on
-plot(ax1,pitch_ax,F1_error_new,'-*','LineWidth',2.0);
+plot(ax1,pitch_ax,b(1,:),'-*','LineWidth',2.0);
 title(ax1,'F1 error estimation');
 ylabel(ax1,'%Error');
 
 
 ax2 = subplot(2,1,2); 
-plot(ax2,pitch_ax,F2_error_old,'-o','LineWidth',2.0);
+plot(ax2,pitch_ax,a(2,:),'-o','LineWidth',2.0);
 % plot(ax2,pitch_ax,F2_error_LPC,'-o','LineWidth',2.0);
 hold on
-plot(ax2,pitch_ax,F2_error_new,'-*','LineWidth',2.0);
+plot(ax2,pitch_ax,b(2,:),'-*','LineWidth',2.0);
 title(ax2,'F2 error estimation');
 ylabel(ax2,'%Error');
 hold off
 
 figure(2)
 ax1 = subplot(2,1,1); 
-plot(ax1,pitch_ax,F3_error_old,'-o','LineWidth',2.0);
+plot(ax1,pitch_ax,a(3,:),'-o','LineWidth',2.0);
 % plot(ax3,pitch_ax,F3_error_LPC,'-o','LineWidth',2.0);
 hold on
-plot(ax1,pitch_ax,F3_error_new,'-*','LineWidth',2.0);
+plot(ax1,pitch_ax,b(3,:),'-*','LineWidth',2.0);
 title(ax1,'F3 error estimation');
 ylabel(ax1,'%Error');
 
 
 ax2 = subplot(2,1,2); 
-plot(ax2,pitch_ax,F4_error_old,'-o','LineWidth',2.0);
+plot(ax2,pitch_ax,a(4,:),'-o','LineWidth',2.0);
 % plot(ax1,pitch_ax,F4_error_LPC,'-o','LineWidth',2.0);
 hold on
-plot(ax2,pitch_ax,F4_error_new,'-*','LineWidth',2.0);
+plot(ax2,pitch_ax,b(4,:),'-*','LineWidth',2.0);
 title(ax2,'F4 error estimation');
 ylabel(ax2,'%Error');
 xlabel(ax2,'pitch(Hz)');
 hold off
 
-figure(3)
-ax1 = subplot(2,1,1); 
-plot(ax1,pitch_ax,D1_error_old,'-o','LineWidth',2.0);
-hold on
-plot(ax1,pitch_ax,D1_error_new,'-*','LineWidth',2.0);
-title(ax1,'D1 error estimation');
-ylabel(ax1,'%Error');
-xlabel(ax1,'pitch(Hz)');
-
-
-ax2 = subplot(2,1,2); 
-plot(ax2,pitch_ax,D2_error_old,'-o','LineWidth',2.0);
-hold on
-plot(ax2,pitch_ax,D2_error_new,'-*','LineWidth',2.0);
-title(ax2,'D2 error estimation');
-ylabel(ax2,'%Error');
-xlabel(ax2,'pitch(Hz)');
-hold off;
+% figure(3)
+% ax1 = subplot(2,1,1); 
+% plot(ax1,pitch_ax,D1_error_old,'-o','LineWidth',2.0);
+% hold on
+% plot(ax1,pitch_ax,D1_error_new,'-*','LineWidth',2.0);
+% title(ax1,'D1 error estimation');
+% ylabel(ax1,'%Error');
+% xlabel(ax1,'pitch(Hz)');
+% 
+% 
+% ax2 = subplot(2,1,2); 
+% plot(ax2,pitch_ax,D2_error_old,'-o','LineWidth',2.0);
+% hold on
+% plot(ax2,pitch_ax,D2_error_new,'-*','LineWidth',2.0);
+% title(ax2,'D2 error estimation');
+% ylabel(ax2,'%Error');
+% xlabel(ax2,'pitch(Hz)');
+% hold off;
 
 % figure(2)
 % plot(pitch_ax,F2_error_old,'-o','LineWidth',2.0);
