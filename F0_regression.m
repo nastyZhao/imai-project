@@ -76,7 +76,7 @@ for peak_Iter=1:1:periodpeak_Num
     scatter(period_peak_loc,cepstrum(period_peak_loc),'k');
     scatter(left_lifter,cepstrum(left_lifter),'filled','r');
     scatter(right_lifter,cepstrum(right_lifter),'filled','r');
-    
+                 
 end
 
 first_envelope = real(fft(cepstrum_lifter));
