@@ -1,12 +1,21 @@
 clear
+<<<<<<< HEAD
 [sidetest,fs_origin] = audioread('..\data\20180828(CR vowel a test)\CR_a_750Hz.wav');
+=======
+[sidetest,fs_origin] = audioread('..\data\20180828(CR vowel a test)\CR_a_293Hz.wav');
+>>>>>>> bd704b0bba852145162f378994d93b441da55a6f
 fs = 16000;
 vowel_resample=resample(sidetest,fs,fs_origin);
 vowel_filtered=filter([1,-0.99],[1],vowel_resample);
 
 %FFT paramaters setting%
+<<<<<<< HEAD
 Nframe = 512;
 Nfft = Nframe*4;
+=======
+Nframe = 320;
+Nfft = 1024;
+>>>>>>> bd704b0bba852145162f378994d93b441da55a6f
 nstart = 15000;
 
 %axis scaling%
@@ -58,7 +67,7 @@ envelope_show = envelope(1:axis_length)';
 
 [env_peak,ceps]=imai_peak(spectrum,40,2,5,'re');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-remove_lifter_order = 10;
+remove_lifter_order = 20;
 nr = 2*remove_lifter_order-4; % almost 1 period left and right
 if floor(nr/2) == nr/2, nr=nr-1; end; % make it odd
 remove_lifter_window = boxcar(nr)';
@@ -76,7 +85,11 @@ wzp_env_getter = [env_lifter_window(((ne+1)/2):ne),zeros(1,Nfft-ne),...
 cep_hr_liftered = wzp_harmonic_remover.*real(ifft(spectrum'));
 V=real(fft(cep_hr_liftered))';%µ¹Æ×
 
+<<<<<<< HEAD
 nIter = 4;
+=======
+nIter = 5;
+>>>>>>> bd704b0bba852145162f378994d93b441da55a6f
 
 figure(2);
 plot(friency_axis,spectrum_show,'color',[96 96 96]/255);
@@ -91,10 +104,17 @@ for i=1:nIter
         end
     end
     base_observer = E(1:axis_length);
+<<<<<<< HEAD
     if i==nIter
         c=wzp_env_getter.*real(ifft(E));
     else
         Iter_order = remove_lifter_order*2*i;
+=======
+%     if i==nIter
+%         c=wzp_env_getter.*real(ifft(E));
+%     else
+        Iter_order = remove_lifter_order+i*25;
+>>>>>>> bd704b0bba852145162f378994d93b441da55a6f
         ni = 2*Iter_order-4; % almost 1 period left and right
         if floor(ni/2) == ni/2, ni=ni-1; end; % make it odd
         remove_lifter_window = boxcar(ni)';
