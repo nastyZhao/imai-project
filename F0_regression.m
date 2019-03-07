@@ -1,14 +1,15 @@
 function [spectrum,ceps_base,base_loc,base_val] = F0_regression(FILENAME)
 
-[sidetest,fs_origin] = audioread('..\data\20180828(CR vowel a test)\CR_a_750Hz.wav');
+% [sidetest,fs_origin] = audioread(FILENAME);
+[sidetest,fs_origin] = audioread('..\data\CR_A_30HNR_JITTER\CR_A_400.wav');
 fs = 16000;
 vowel_resample=resample(sidetest,fs,fs_origin);
 vowel_filtered=filter([1,-0.99],[1],vowel_resample);
 
 %FFT paramaters setting%
-Nframe = 480;
+Nframe = 800;
 Nfft = 2048;
-nstart = 15000;
+nstart = 5500;
 
 %axis scaling%
 axis_length = 8000/(fs/Nfft);
@@ -116,9 +117,9 @@ V=first_envelope';%µ¹Æ×
 nIter =2;
 
 figure(2);
-plot(friency_axis,spectrum_show,'color',[96 96 96]/255);
+% plot(friency_axis,spectrum_show,'color',[96 96 96]/255);
 hold on
-plot(friency_axis,V(1:axis_length),'k','LineWidth',2.0);
+% plot(friency_axis,V(1:axis_length),'k','LineWidth',2.0);
 for i=1:nIter
     for j=1:Nfft
         if V(j)>spectrum(j)
@@ -161,13 +162,13 @@ scatter(base_val,base_loc,'k');
 ylabel('amplitude(db)');xlabel('Frequency(Hz)');
 hold off
 % 
-% figure(5)
-% plot(friency_axis,spectrum_show,'color',[96 96 96]/255);
-% hold on
-% plot(friency_axis,first_envelope_show,'r','LineWidth',2.0);
-% scatter(base_val,base_loc,'k');
-% plot(friency_axis,envelope_show,'k','LineWidth',2.0);
-% hold off
+figure(5)
+plot(friency_axis,spectrum_show,'color',[96 96 96]/255);
+hold on
+plot(friency_axis,first_envelope_show,'r','LineWidth',2.0);
+scatter(base_val,base_loc,'k');
+plot(friency_axis,envelope_show,'k','LineWidth',2.0);
+hold off
 % 
 end
 

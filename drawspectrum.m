@@ -1,17 +1,17 @@
 clear
 
-[sidetest,fs_origin] = audioread('..\data\20180828(CR vowel a test)\CR_a_750Hz.wav');
+[sidetest,fs_origin] = audioread('..\data\CR_A_30HNR_JITTER\CR_A_400.wav');
 fs = 16000;
 vowel_resample=resample(sidetest,fs,fs_origin);
 vowel_filtered=filter([1,-0.99],[1],vowel_resample);
 % vowel_filtered=filter([1,-0.99],[1],vowel_resample);
 
-Nframe = 320;
-Nfft = 1024;
-nstart = 10000;
+Nframe = 480;
+Nfft = 2048;
+nstart = 15000;
 
 axis_length = 8000/(fs/Nfft);
-M =21;
+M =53;
 friency_axis = (1:axis_length);
 friency_axis = friency_axis(:)*(fs/Nfft);
 
@@ -41,8 +41,8 @@ v_b_val = v_b_val(:)*(fs/Nfft);
 figure(3);
 plot(friency_axis,spectrum_show,'color',[96 96 96]/255);
 hold on
-plot(friency_axis,envelope_show,'k','LineWidth',2.0);
-scatter(val,loc,'k');
+% plot(friency_axis,envelope_show,'k','LineWidth',2.0);
+% scatter(val,loc,'k');
 % plot(friency_axis,ceps_base_show,'r','LineWidth',2.0);
 % scatter(b_val,b_loc,'k');
 ylabel('amplitude(db)');xlabel('Frequency(Hz)');
