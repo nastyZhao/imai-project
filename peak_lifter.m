@@ -27,65 +27,43 @@ M =38;
 w=ones(1,2*M+1);
 h=[w(M+1:-1:1) zeros(1,Nfft-2*M-1) w(1:M)];%w(M+1:-1:1) -1表示反向赋值，h(1)=w(M+1)...h(M+1)=w(1)
 anti_h = [zeros(1,M+1) ones(1,Nfft-2*M-1) zeros(1,M)];
+
 cepstrum = real(ifft(spectrum'));
+
+
 cep_liftered = h.*real(ifft(spectrum'));
 envelope = real(fft(cep_liftered));
 
 
-
-
-
-
-
-
-
-
 %% imai peak 
-peak_lifter_spectrum = spectrum;
-cepstrum_tolifter = real(ifft(spectrum'));
-
-a = get_peak_cepstrum(peak_lifter_spectrum,Nfft,1,M);
-b = get_peak_cepstrum(peak_lifter_spectrum,Nfft,2,M);
-c = get_peak_cepstrum(peak_lifter_spectrum,Nfft,3,M);
-
-b1 = [zeros(1,38) b(39:44) zeros(1,1962) b(2006:2011) zeros(1,37)];
-b2 = [zeros(1,78) b(79:86) zeros(1,1878) b(1964:1971) zeros(1,77)];
-b3 = [zeros(1,118) b(119:125) zeros(1,1800) b(1925:1931) zeros(1,117)];
-b4 = [zeros(1,158) b(159:163) zeros(1,1724) b(1887:1891) zeros(1,157)];
-% 
-sp_b1 = real(fft(b1));
-sp_b2 = real(fft(b2));
-sp_b3 = real(fft(b3));
-sp_b4 = real(fft(b4));
-% 
-% add1=sp_b1+sp_b2;
-% add2=sp_b1+sp_b2+sp_b3;
-add3=b1+b2+b3+b4;
-add3_p = max(add3,0);
-b_p = max(b,0);
+b = get_peak_cepstrum(spectrum,Nfft,2,M);
+b_p = b;
 anti_bp = anti_h.*(b_p);
-sp_b = real(fft(b_p));
+
+sp_b = real(fft(b_p))';
 sp_antib = real(fft(b_p));
 % 
-true_env = imai_peak(spectrum,M,1.5,4,'re');
-
-peak_spectrum = spectrum-true_env;
+true_env = imai_peak(spectrum,30,1.5,4,'re');
+lifter = true_env-3;
 
 peak_env = imai_peak(spectrum,M,0,2,'re');
-spectrum_har = max(spectrum - peak_env,0);
+spectrum_har = max(spectrum - lifter,0);
 
-[ori_val,ori_loc] = findpeaks(sp_b);
 
-windowSize = 20; 
-averagewin = (1/windowSize)*triang(windowSize);
+windowSize = 5; 
+averagewin = (1/windowSize)*ones(1,windowSize);
 base = 1;
 y = filter(averagewin,base,sp_b);
-[val,loc] = findpeaks(y(1:axis_length));
-loc_show = loc(:)*(fs/Nfft);
 
-peak_distance = loc(1)-ori_loc(1);
-fix_peak = circshift(y,-peak_distance); 
-fix_peak = fix_peak*(max(spectrum_har)/max(fix_peak));
+
+cpy = real(ifft(y));
+for i=1:length(cpy)
+    if cpy(i)<0;
+        cpy(i) = 0;
+    end
+end
+yy = real(fft(cpy));
+
 
 
 base_spectrum = max(envelope'-spectrum,0)
@@ -96,21 +74,26 @@ base_spectrum = max(envelope'-spectrum,0)
 %     delta_sp = max(spectrum_har-max(peak_env),0);
 % 
 % %     peak_sp_recover = max(spectrum-peak_env)/max(peak_sp)*peak_sp;
-    pspectrum = spectrum - fix_peak;
+    
 % end
 
+
+cep_sip = max(cepstrum,0);
+spec_sip = real(fft(cep_sip));
+bbbb = filter(averagewin,base,spec_sip);
+cepbbbb = real(fft(bbbb));
+spectrum_line = spec_sip - spectrum;
 
 
 %% results
 
 figure(7);
-plot(friency_axis,spectrum_har(1:axis_length),'color',[96 96 96]/255);
-
-% plot(friency_axis,add3(1:axis_length),'LineWidth',1.0);
+plot(friency_axis,spectrum(1:axis_length),'color',[96 96 96]/255);
 hold on
 % scatter(loc,val,'k');
+plot(friency_axis,bbbb(1:axis_length),'LineWidth',1.0);
 % plot(friency_axis,true_env(1:axis_length),'LineWidth',2.0);
-% plot(friency_axis,peak_env(1:axis_length),'LineWidth',1.0);
+% plot(friency_axis,lifter(1:axis_length),'LineWidth',1.0);
 % plot(friency_axis,sp_b3(1:axis_length),'LineWidth',1.0);
 % plot(friency_axis,delta_env(1:axis_length),'LineWidth',1.0);
 
@@ -119,17 +102,18 @@ hold on
 hold off
 
 figure(8)
-plot(friency_axis,sp_b(1:axis_length),'color',[96 96 96]/255);
+% plot(friency_axis,sp_b(1:axis_length),'color',[96 96 96]/255);
 hold on
-plot(friency_axis,y(1:axis_length),'LineWidth',1.0);
+plot(friency_axis,spectrum_line(1:axis_length),'LineWidth',1.0);
+% plot(friency_axis,yy(1:axis_length),'LineWidth',1.0);
 hold off
 
 figure(3);
-plot(anti_bp(1:1024));
+plot(b(1:1024));
 % 
 % % plot(residual_peak_cepstrum(1:200));
-% hold on
-% plot(a(1:200));
+hold on
+plot(cpy(1:200));
 % plot(b(1:200));
 % hold off
 % % % 
@@ -138,5 +122,5 @@ plot(anti_bp(1:1024));
 % hold on
 % plot(b(1:200));
 % plot(c(1:200));
-% hold off
+hold off
 % % % end
