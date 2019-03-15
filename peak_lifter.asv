@@ -7,7 +7,7 @@ vowel_resample=resample(sidetest,fs,fs_origin);
 vowel_filtered=filter([1,-0.99],[1],vowel_resample);
 
 %FFT paramaters setting%
-Nframe = 800;
+Nframe = 400;
 Nfft = 2048;
 nstart = 15000;
 
@@ -23,7 +23,7 @@ spectrum_show = spectrum(1:axis_length)';
 
 %% cepstrum method
 
-M =24;
+M =38;
 w=ones(1,2*M+1);
 h=[w(M+1:-1:1) zeros(1,Nfft-2*M-1) w(1:M)];%w(M+1:-1:1) -1表示反向赋值，h(1)=w(M+1)...h(M+1)=w(1)
 anti_h = [zeros(1,M+1)  ones(1,Nfft-2*M-1)  zeros(1,M)];
@@ -77,7 +77,7 @@ envelope = real(fft(cep_liftered));
 % cepbbbb = real(fft(bbbb));
 % spectrum_line = spec_sip - spectrum;
 spec_to_sub = spectrum;
-Iteration = 1;
+Iteration = 50;
 a = 1;
 for iter = 1:Iteration
 sub_cep = get_peak_cepstrum(spec_to_sub,Nfft,1,M)';
@@ -101,11 +101,11 @@ hold on
 plot(friency_axis,spec_subed(1:axis_length),'LineWidth',1.0);
 % plot(friency_axis,final_env(1:axis_length),'LineWidth',2.0);
 scatter(peak_loc,peak_val,'k');
-% plot(friency_axis,y(1:axis_length),'LineWidth',1.0);
+plot(friency_axis,y(1:axis_length),'LineWidth',1.0);
 % plot(friency_axis,sp_b3(1:axis_length),'LineWidth',1.0);
 % plot(friency_axis,delta_env(1:axis_length),'LineWidth',1.0);
 
-plot(friency_axis,envelope(1:axis_length),'LineWidth',1.0);
+% plot(friency_axis,peak_1(1:axis_length),'LineWidth',1.0);
 % plot(friency_axis,peak_3(1:axis_length),'LineWidth',1.0);
 hold off
 
@@ -118,15 +118,16 @@ hold on
 hold off
 
 figure(3);
-plot(cepstrum(1:200));
+plot(sub_cep_tune(1:1024));
 % plot(cpy(1:200));
 % % plot(residual_peak_cepstrum(1:200));
-hold on
-plot(sub_cep_tune(1:200));
-hold off
+% hold on
+% 
+% % plot(b(1:200));
+% % hold off
 % % % % 
-% figure(4);
-% plot(a(1:200));
+% % figure(4);
+% % plot(a(1:200));
 % % hold on
 % % plot(b(1:200));
 % % plot(c(1:200));
