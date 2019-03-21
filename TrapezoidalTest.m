@@ -1,15 +1,13 @@
-function [spectrum,ceps_base,base_loc,base_val] = F0_regression(FILENAME)
-
-% [sidetest,fs_origin] = audioread(FILENAME);
+clear
 [sidetest,fs_origin] = audioread('..\data\CR_A_30HNR_JITTER\CR_A_400.wav');
 fs = 16000;
 vowel_resample=resample(sidetest,fs,fs_origin);
 vowel_filtered=filter([1,-0.99],[1],vowel_resample);
 
 %FFT paramaters setting%
-Nframe = 800;
+Nframe = 480;
 Nfft = 2048;
-nstart = 5500;
+nstart = 10000;
 
 %axis scaling%
 axis_length = 8000/(fs/Nfft);
@@ -23,7 +21,7 @@ spectrum_show = spectrum(1:axis_length)';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %lifter order setting%
-M =200;
+M =40;
 nw = 2*M-4; % almost 1 period left and right
 if floor(nw/2) == nw/2, nw=nw-1; end; % make it odd
 
@@ -36,67 +34,24 @@ wflattop = flattopwin(nw)';
 y1 = trapmf(1:1:(nw+1)/2,[1 1 10 (nw+1)/2]);
 y2 = trapmf(1:1:(nw-1)/2,[1 1 10 (nw-1)/2]);
 
-% y1 = winrec(((nw+1)/2):nw);
-% y2 = winrec(1:(nw-1)/2);
-
 y3 = winnuttall(((nw+1)/2):nw);
 y4 = winnuttall(1:(nw-1)/2);
 
 y5 = winnuttall(((nw+1)/2):nw);
 y6 = winnuttall(1:(nw-1)/2);
-% y3 = winham(((nw+1)/2):nw);
-% y4 = winblac(((nw+1)/2):nw);
-% y5 = winnuttall(((nw+1)/2):nw);
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %cepstrum method%
 wzp = [y1,zeros(1,Nfft-nw), y2];
 
-cepstrum = real(ifft(spectrum'));
-cepstrum_lifter = cepstrum;
-
-
-period_min = fix(fs/800);
-period_max = fix(fs/80);
-[period_val,period_loc] = max(cepstrum(period_min:period_max));
-period_loc = period_loc+period_min-1;
-periodpeak_Num = floor(Nfft/(period_loc*2));
-
-figure(10)
-plot(cepstrum);
-hold on
-
-for peak_Iter=1:1:periodpeak_Num
-    period_peak_loc = period_loc*peak_Iter;
-    [leftzeros,rightzeros] = findZeroSide(cepstrum,period_peak_loc,10);
-    left_lifter = leftzeros(1);
-    right_lifter = rightzeros(1);
-    cepstrum_lifter(left_lifter:right_lifter)= 0;
-    cepstrum_lifter(Nfft-right_lifter+2:Nfft-left_lifter+2)=0;
-    
-    scatter(period_peak_loc,cepstrum(period_peak_loc),'k');
-    scatter(left_lifter,cepstrum(left_lifter),'filled','r');
-    scatter(right_lifter,cepstrum(right_lifter),'filled','r');
-                 
-end
-
-first_envelope = real(fft(cepstrum_lifter));
-first_envelope_show = first_envelope(1:axis_length)';
-
-cep_liftered = wzp.*cepstrum_lifter;
+cep_liftered = wzp.*real(ifft(spectrum'));
 envelope = real(fft(cep_liftered));
 envelope_show = envelope(1:axis_length)';
 
 
-% plot(cepstrum_lifter);
-hold off
-
-
-
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-remove_lifter_order = 100;
+remove_lifter_order = 50;
 nr = 2*remove_lifter_order-4; % almost 1 period left and right
 if floor(nr/2) == nr/2, nr=nr-1; end; % make it odd
 remove_lifter_window = window(@blackman,nr)';
@@ -112,14 +67,14 @@ wzp_env_getter = [env_lifter_window(((ne+1)/2):ne),zeros(1,Nfft-ne),...
     env_lifter_window(1:(ne-1)/2)];
 
 cep_hr_liftered = wzp_harmonic_remover.*real(ifft(spectrum'));
-V=first_envelope';%µ¹Æ×
+V=real(fft(cep_hr_liftered))';%µ¹Æ×
 
-nIter =2;
+nIter = 3;
 
 figure(2);
-% plot(friency_axis,spectrum_show,'color',[96 96 96]/255);
+plot(friency_axis,spectrum_show,'color',[96 96 96]/255);
 hold on
-% plot(friency_axis,V(1:axis_length),'k','LineWidth',2.0);
+plot(friency_axis,V(1:axis_length),'k','LineWidth',2.0);
 for i=1:nIter
     for j=1:Nfft
         if V(j)>spectrum(j)
@@ -132,7 +87,7 @@ for i=1:nIter
     if i==nIter
         c=wzp_env_getter.*real(ifft(E));
     else
-        Iter_order = remove_lifter_order+i*20;
+        Iter_order = remove_lifter_order+i*50;
         ni = 2*Iter_order-4; % almost 1 period left and right
         if floor(ni/2) == ni/2, ni=ni-1; end; % make it odd
         remove_lifter_window = window(@blackman,ni)';
@@ -158,18 +113,18 @@ base_val = base_val(:)*(fs/Nfft);
 % plot(friency_axis,env_peak(1:axis_length),'k','LineWidth',2.0);
 plot(friency_axis,ceps_base_show,'r','LineWidth',2.0);
 scatter(base_val,base_loc,'k');
-% % plot(y1,'r','LineWidth',2.0);
+% plot(y1,'r','LineWidth',2.0);
 ylabel('amplitude(db)');xlabel('Frequency(Hz)');
 hold off
-% 
+
 figure(5)
 plot(friency_axis,spectrum_show,'color',[96 96 96]/255);
+
 hold on
-plot(friency_axis,first_envelope_show,'r','LineWidth',2.0);
+plot(friency_axis,ceps_base_show,'r','LineWidth',2.0);
 scatter(base_val,base_loc,'k');
 plot(friency_axis,envelope_show,'k','LineWidth',2.0);
 hold off
-% 
-end
+
 
 

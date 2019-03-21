@@ -42,3 +42,5 @@ hold off
 
 figure(2)
 plot(t,s3);
+
+winndow_1 = ons

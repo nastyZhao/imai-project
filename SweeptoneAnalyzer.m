@@ -2,8 +2,8 @@ clear
 
 
 
-sweep_vocal = audioread('data\20180828(CR vowel a test)\CR_qua_sweep_vocal.wav');
-sweep_box = audioread('data\20180828(CR vowel a test)\CR_qua_sweep_box.wav');
+sweep_vocal = audioread('..\data\CR_A_truth\SWEEP_VOCAL_CR.wav');
+sweep_box = audioread('..\data\CR_A_truth\SWEEP_BOX.wav');
 
 
 fs=44100;
@@ -25,7 +25,7 @@ origin_spectrum_box = 20*log10(abs(fft(sweep_box)));
 
 
 transfer_spectrum = origin_spectrum_vocal - origin_spectrum_box;
-[transfer_envelope,cepstrum]=getcepstrum(transfer_spectrum,200);
+[transfer_envelope,cepstrum]=getcepstrum(transfer_spectrum,120);
 [loc,val] = findpeaks(transfer_envelope(1:axis_length));
 val = val(:)*(fs/length(fft_origin));
 
