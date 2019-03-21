@@ -21,9 +21,16 @@ spectrum = getspectrum(vowel_resample,Nframe,Nfft,fs,nstart);
 spectrum_show = spectrum(1:axis_length)';
 
 
+%% time averaging
+
+for timestamp = 1000:200:20000
+    spectrum = getspectrum(vowel_filtered,Nframe,Nfft,fs,nstart);
+end
+
+
 %% cepstrum method
 
-M =38;
+M =24;
 w=ones(1,2*M+1);
 h=[w(M+1:-1:1) zeros(1,Nfft-2*M-1) w(1:M)];%w(M+1:-1:1) -1表示反向赋值，h(1)=w(M+1)...h(M+1)=w(1)
 anti_h = [zeros(1,M+1)  ones(1,Nfft-2*M-1)  zeros(1,M)];
@@ -35,49 +42,9 @@ envelope = real(fft(cep_liftered));
 
 
 %% imai peak 
-% b = get_peak_cepstrum(spectrum,Nfft,2,M);
-% b_p = max(b,0);
-% anti_bp = anti_h.*(b_p);
-% 
-% sp_b = real(fft(b_p))';
-% sp_antib = real(fft(b_p))';
-% % 
-% true_env = imai_peak(spectrum,30,1.5,4,'re');
-% lifter = true_env-3;
-% 
-% peak_env = imai_peak(spectrum,M,0,2,'re');
-% spectrum_har = max(spectrum - lifter,0);
-% 
-% 
-% base_spectrum = max(envelope'-spectrum,0)
-% 
-% spec_lifter = spectrum ;
-% NIter = 7;
-% for i = 1:1:NIter
-%     
-%     windowSize = 10;
-%     averagewin = (1/windowSize)*ones(1,windowSize);
-%     base = 1;
-%     y = filter(averagewin,base,sp_b);
-%     cpy = real(ifft(y));
-%     for j=1:length(cpy)
-%         if cpy(j)<0;
-%             cpy(j) = 0;
-%         end
-%     end
-%     yy = real(fft(cpy));
-%     spec_left = spec_lifter-yy;
-%     spec_lifter = spec_left;
-% end
-% final_env = getcepstrum(spec_left,30)
 
-% cep_sip = max(cepstrum,0);
-% spec_sip = real(fft(cep_sip));
-% bbbb = filter(averagewin,base,spec_sip);
-% cepbbbb = real(fft(bbbb));
-% spectrum_line = spec_sip - spectrum;
 spec_to_sub = spectrum;
-Iteration = 50;
+Iteration = 1;
 a = 1;
 for iter = 1:Iteration
 sub_cep = get_peak_cepstrum(spec_to_sub,Nfft,1,M)';
@@ -101,11 +68,11 @@ hold on
 plot(friency_axis,spec_subed(1:axis_length),'LineWidth',1.0);
 % plot(friency_axis,final_env(1:axis_length),'LineWidth',2.0);
 scatter(peak_loc,peak_val,'k');
-plot(friency_axis,y(1:axis_length),'LineWidth',1.0);
+% plot(friency_axis,y(1:axis_length),'LineWidth',1.0);
 % plot(friency_axis,sp_b3(1:axis_length),'LineWidth',1.0);
 % plot(friency_axis,delta_env(1:axis_length),'LineWidth',1.0);
 
-% plot(friency_axis,peak_1(1:axis_length),'LineWidth',1.0);
+plot(friency_axis,envelope(1:axis_length),'LineWidth',1.0);
 % plot(friency_axis,peak_3(1:axis_length),'LineWidth',1.0);
 hold off
 
@@ -118,16 +85,15 @@ hold on
 hold off
 
 figure(3);
-plot(sub_cep_tune(1:1024));
+plot(cepstrum(1:200));
 % plot(cpy(1:200));
 % % plot(residual_peak_cepstrum(1:200));
-% hold on
-% 
-% % plot(b(1:200));
-% % hold off
+hold on
+plot(sub_cep_tune(1:200));
+hold off
 % % % % 
-% % figure(4);
-% % plot(a(1:200));
+% figure(4);
+% plot(a(1:200));
 % % hold on
 % % plot(b(1:200));
 % % plot(c(1:200));

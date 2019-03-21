@@ -7,7 +7,7 @@ vowel_resample=resample(sidetest,fs,fs_origin);
 vowel_filtered=filter([1,-0.99],[1],vowel_resample);
 
 %FFT paramaters setting%
-Nframe = 800;
+Nframe = 400;
 Nfft = 2048;
 nstart = 15000;
 
@@ -19,6 +19,13 @@ friency_axis = friency_axis(:)*(fs/Nfft);
 %spectrum calculating%
 spectrum = getspectrum(vowel_resample,Nframe,Nfft,fs,nstart);
 spectrum_show = spectrum(1:axis_length)';
+
+
+%% time averaging
+
+for timestamp = 1000:200:20000
+    spectrum = getspectrum(vowel_filtered,Nframe,Nfft,fs,timestamp);
+end
 
 
 %% cepstrum method
@@ -35,47 +42,7 @@ envelope = real(fft(cep_liftered));
 
 
 %% imai peak 
-% b = get_peak_cepstrum(spectrum,Nfft,2,M);
-% b_p = max(b,0);
-% anti_bp = anti_h.*(b_p);
-% 
-% sp_b = real(fft(b_p))';
-% sp_antib = real(fft(b_p))';
-% % 
-% true_env = imai_peak(spectrum,30,1.5,4,'re');
-% lifter = true_env-3;
-% 
-% peak_env = imai_peak(spectrum,M,0,2,'re');
-% spectrum_har = max(spectrum - lifter,0);
-% 
-% 
-% base_spectrum = max(envelope'-spectrum,0)
-% 
-% spec_lifter = spectrum ;
-% NIter = 7;
-% for i = 1:1:NIter
-%     
-%     windowSize = 10;
-%     averagewin = (1/windowSize)*ones(1,windowSize);
-%     base = 1;
-%     y = filter(averagewin,base,sp_b);
-%     cpy = real(ifft(y));
-%     for j=1:length(cpy)
-%         if cpy(j)<0;
-%             cpy(j) = 0;
-%         end
-%     end
-%     yy = real(fft(cpy));
-%     spec_left = spec_lifter-yy;
-%     spec_lifter = spec_left;
-% end
-% final_env = getcepstrum(spec_left,30)
 
-% cep_sip = max(cepstrum,0);
-% spec_sip = real(fft(cep_sip));
-% bbbb = filter(averagewin,base,spec_sip);
-% cepbbbb = real(fft(bbbb));
-% spectrum_line = spec_sip - spectrum;
 spec_to_sub = spectrum;
 Iteration = 1;
 a = 1;
