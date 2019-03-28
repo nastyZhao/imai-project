@@ -176,8 +176,7 @@ for i=1:3
             side_r = side_r + 1;
         end
     end
-    ceps_clear_sqr(side_l(i):side_r(i)) = 0;
-    [var_max_rah,max_rah_loc] = max(ceps_clear_low(zero_boundry:500));
+    ceps_clear_sqr()
 end
 
 
