@@ -1,4 +1,4 @@
-function peak_cepstrum = get_peak_cepstrum(spectrum,Nfft,nIter,M)
+function [peak_cepstrum,peak_spec] = get_peak_cepstrum(spectrum,Nfft,nIter,M)
 
 % M =38;
 w=ones(1,2*M+1);
@@ -20,7 +20,7 @@ for i=1:nIter
 end
 
 peak_cepstrum = real(ifft(residual_spectrum));
-
+peak_spec = residual_spectrum;
 % remove_filter = max(origin_peak_cepstrum)/10;
 % peak_cepstrum = max(origin_peak_cepstrum-remove_filter,0);
 

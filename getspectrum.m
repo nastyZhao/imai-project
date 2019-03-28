@@ -9,7 +9,7 @@ winham = window(@hamming,Nframe);
 winrec = boxcar(Nframe);
 
 x_windowed = winblac.* x_nonDC;
-
+% x_windowed = x_windowed - mean(x_windowed);
 spectrum_x = 20*log10(abs(fft(x_windowed,Nfft)));
 % spectrum_x = spectrum_x_o(1:3000/(fs/Nfft));
 
