@@ -7,13 +7,13 @@ truth = csvread('Transfer_Function_CR_sweep.csv');
 
 
 
-ceps_SP = xlsread('CR_SP.xls');
+% ceps_SP = xlsread('CR_SP.xls');
 ceps_DT = xlsread('CR_DT.xls');
 cepstrum = xlsread('CR_cepstrum.xls');
 
-[m,n] = size(ceps_SP);
+[m,n] = size(ceps_DT);
 for i=1:1:n
-    ceps_SP_error(:,i) = 100*abs(ceps_SP(:,i) - truth)./truth;
+%     ceps_SP_error(:,i) = 100*abs(ceps_SP(:,i) - truth)./truth;
     ceps_DT_error(:,i) = 100*abs(ceps_DT(:,i) - truth)./truth;
     cepstrum_error(:,i) = 100*abs(cepstrum(:,i) - truth)./truth;
 end
@@ -28,7 +28,7 @@ ax1 = subplot(2,1,1);
 plot(ax1,pitch_ax,ceps_DT_error(1,:),'-o','LineWidth',2.0);
 % plot(ax1,pitch_ax,F1_error_LPC,'-o','LineWidth',2.0);
 hold on
-plot(ax1,pitch_ax,ceps_SP_error(1,:),'-*','LineWidth',2.0);
+plot(ax1,pitch_ax,cepstrum_error(1,:),'-*','LineWidth',2.0);
 title(ax1,'F1 error estimation');
 ylabel(ax1,'%Error');
 
@@ -37,7 +37,7 @@ ax2 = subplot(2,1,2);
 plot(ax2,pitch_ax,ceps_DT_error(2,:),'-o','LineWidth',2.0);
 % plot(ax2,pitch_ax,F2_error_LPC,'-o','LineWidth',2.0);
 hold on
-plot(ax2,pitch_ax,ceps_SP_error(2,:),'-*','LineWidth',2.0);
+plot(ax2,pitch_ax,cepstrum_error(2,:),'-*','LineWidth',2.0);
 title(ax2,'F2 error estimation');
 ylabel(ax2,'%Error');
 hold off
@@ -47,7 +47,7 @@ ax1 = subplot(2,1,1);
 plot(ax1,pitch_ax,ceps_DT_error(3,:),'-o','LineWidth',2.0);
 % plot(ax3,pitch_ax,F3_error_LPC,'-o','LineWidth',2.0);
 hold on
-plot(ax1,pitch_ax,ceps_SP_error(3,:),'-*','LineWidth',2.0);
+plot(ax1,pitch_ax,cepstrum_error(3,:),'-*','LineWidth',2.0);
 title(ax1,'F3 error estimation');
 ylabel(ax1,'%Error');
 
@@ -56,7 +56,7 @@ ax2 = subplot(2,1,2);
 plot(ax2,pitch_ax,ceps_DT_error(4,:),'-o','LineWidth',2.0);
 % plot(ax1,pitch_ax,F4_error_LPC,'-o','LineWidth',2.0);
 hold on
-plot(ax2,pitch_ax,ceps_SP_error(4,:),'-*','LineWidth',2.0);
+plot(ax2,pitch_ax,cepstrum_error(4,:),'-*','LineWidth',2.0);
 title(ax2,'F4 error estimation');
 ylabel(ax2,'%Error');
 xlabel(ax2,'pitch(Hz)');
@@ -66,7 +66,7 @@ figure(3)
 ax1 = subplot(2,1,1); 
 plot(ax1,pitch_ax,ceps_DT_error(5,:),'-o','LineWidth',2.0);
 hold on
-plot(ax1,pitch_ax,ceps_SP_error(5,:),'-*','LineWidth',2.0);
+plot(ax1,pitch_ax,cepstrum_error(5,:),'-*','LineWidth',2.0);
 title(ax1,'D1 error estimation');
 ylabel(ax1,'%Error');
 xlabel(ax1,'pitch(Hz)');
@@ -75,7 +75,7 @@ xlabel(ax1,'pitch(Hz)');
 ax2 = subplot(2,1,2); 
 plot(ax2,pitch_ax,ceps_DT_error(6,:),'-o','LineWidth',2.0);
 hold on
-plot(ax2,pitch_ax,ceps_SP_error(6,:),'-*','LineWidth',2.0);
+plot(ax2,pitch_ax,cepstrum_error(6,:),'-*','LineWidth',2.0);
 title(ax2,'D2 error estimation');
 ylabel(ax2,'%Error');
 xlabel(ax2,'pitch(Hz)');
