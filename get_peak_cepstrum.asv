@@ -1,4 +1,4 @@
-function [peak_cepstrum,peak_spec,peak_env] = get_peak_cepstrum(spectrum,Nfft,nIter,M)
+function [peak_cepstrum,peak_spec] = get_peak_cepstrum(spectrum,Nfft,nIter,M)
 
 % M =38;
 w=ones(1,2*M+1);
@@ -21,6 +21,8 @@ end
 
 peak_cepstrum = real(ifft(residual_spectrum));
 peak_spec = residual_spectrum;
-peak_env = V;
+
+lifter_cepstrum = cepstrum - peak_cepstrum;
+peak_lifter_spectrum = real(fft(lifter_cepstrum));
 
 end

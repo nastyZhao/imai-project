@@ -11,7 +11,7 @@ vowel_filtered=filter([1,-0.97],[1],vowel_resample);
 Nframe = 600;
 Nfft = Nframe*4;
 nstart = 5000;
-M = 35;
+M = 71-40;
 %axis scaling%
 axis_length = 8000/(fs/Nfft);
 friency_axis = (1:axis_length);
@@ -39,7 +39,7 @@ win_clear_low = [zeros(1,zero_boundry+1) ones(1,Nfft-2*zero_boundry-1)...
     zeros(1,zero_boundry)];
 
 ceps_slice = sub_cep1 - sub_cep2;
-ceps_slice_clear = win_clear_low.*ceps_slice;
+ceps_slice_clear = win_clear_low.*max(ceps_slice,0);
 
 ceps_clear_low = win_clear_low.*ceps_narrow';
 [var_rah1,loc_rah1] = max(ceps_clear_low(zero_boundry:1000));
@@ -82,17 +82,17 @@ for i=1:rah_num
     [var_max_rah,max_rah_loc] = max(ceps_clear_sqr(1:1000));
 end
 
-ceps_peak_subed = ceps_bla';
+ceps_peak_subed = ceps_narrow';
 for i = 1:rah_num
 %     val_l = [val_l,ceps_bla(left_sides(i))];
 %     val_r = [val_r,ceps_bla(right_sides(i))];
     l_side = left_sides(i)-2;
     r_side = right_sides(i)+2;
     ceps_peak_subed(l_side:r_side)=...
-        ceps_bla(l_side:r_side)'- ceps_restore(l_side:r_side);
+        ceps_narrow(l_side:r_side)'- ceps_restore(l_side:r_side);
     l_mirror = Nfft - r_side + 1-2;
     r_mirror = Nfft - l_side + 1+2;
-    ceps_peak_subed(l_mirror:r_mirror) = ceps_bla(l_mirror:r_mirror)'...
+    ceps_peak_subed(l_mirror:r_mirror) = ceps_narrow(l_mirror:r_mirror)'...
         -ceps_restore(l_mirror:r_mirror);
 end
 
@@ -103,8 +103,8 @@ spec_subed = real(fft(ceps_peak_subed));
 figure(31)
 plot(ceps_bla);
 hold on
-plot(ceps_restore(1:200));
-% plot(ceps_peak_subed);
+% plot(ceps_restore(1:200));
+plot(ceps_peak_subed);
 % scatter(left_sides,var_l);
 % scatter(right_sides,var_r);
 hold off
@@ -112,8 +112,8 @@ hold off
 figure(1)
 plot(friency_axis,spectrum_bla(1:axis_length));
 hold on
-% plot(friency_axis,sub_env1(1:axis_length));
-plot(friency_axis,spec_subed(1:axis_length));
+plot(friency_axis,sub_env1(1:axis_length));
+plot(friency_axis,sub_env2(1:axis_length));
 hold off
 
 % figure(2)

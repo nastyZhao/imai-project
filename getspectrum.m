@@ -14,7 +14,7 @@ elseif win_func == 'bla'
 elseif win_func == 'nut'
     winfunc = window(@nuttallwin,Nframe);
 else
-    winfunc = boxcar(Nframe);
+    winfunc = window(@blackman,Nframe);
 end
 
 x_blocked = x;
