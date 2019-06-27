@@ -56,7 +56,7 @@ end;
 % nstart = 5000;
 % M = 40-3;
 % %axis scaling%
-% axis_length = 4096/(fs/Nfft);
+% axis_length = 2000/(fs/Nfft);
 % friency_axis = (1:axis_length);
 % friency_axis = friency_axis(:)*(fs/Nfft);
 % 
@@ -80,6 +80,7 @@ Ehat=zeros(1,n);
 c=h.*real(ifft(S));
 ceps = real(ifft(S));
 V=real(fft(c));%µ¹Æ×
+V_show = V;
 E=max(S-V,0);
 %   Q = max(S,V)
 
@@ -107,8 +108,9 @@ y=V(:);
 % figure(7)
 % plot(friency_axis,S(1:axis_length));
 % hold on
+% plot(friency_axis,V_show(1:axis_length));
 % plot(friency_axis,Qhat(1:axis_length));
-% % plot(friency_axis,y(1:axis_length));
+
 
 
 

@@ -135,7 +135,7 @@ global friency_axis;
 
 zero_boundry = fs/800;
 lifter = M-3;
-len_constant = 50;
+len_constant = 75;
 len_damp = 0;
 rah_num = 4;
 
