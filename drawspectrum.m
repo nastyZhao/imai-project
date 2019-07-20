@@ -1,21 +1,24 @@
 clear
 
-[sidetest,fs_origin] = audioread('..\data\CR_A_30HNR_JITTER\CR_A_400.wav');
+[sidetest,fs_origin] = audioread('..\data\Desktop\tr_s1\01aa010a_-6.9402_02bo030k_-0.47554.wav');
 fs = 16000;
 vowel_resample=resample(sidetest,fs,fs_origin);
 vowel_filtered=filter([1,-0.99],[1],vowel_resample);
 % vowel_filtered=filter([1,-0.99],[1],vowel_resample);
 
-Nframe = 480;
+Nframe = 250;
 Nfft = 2048;
-nstart = 15000;
+nstart = 41670;
 
 axis_length = 8000/(fs/Nfft);
 M =53;
 friency_axis = (1:axis_length);
 friency_axis = friency_axis(:)*(fs/Nfft);
 
-spectrum = getspectrum(vowel_filtered,Nframe,Nfft,fs,nstart);
+
+vowel_block = vowel_filtered(nstart+1:nstart+Nframe);
+
+spectrum = getspectrum(vowel_block,Nframe,Nfft,'han');
 spectrum_show = spectrum(1:axis_length)';
 
 [envelope,cepstrum]=getcepstrum(spectrum,M);
@@ -39,19 +42,19 @@ verse_ceps_base = 32-ceps_base_show(:);
 v_b_val = v_b_val(:)*(fs/Nfft);
 
 figure(3);
-plot(friency_axis,spectrum_show,'color',[96 96 96]/255);
+plot(friency_axis,spectrum_show,'LineWidth',1.0);
 hold on
 % plot(friency_axis,envelope_show,'k','LineWidth',2.0);
 % scatter(val,loc,'k');
 % plot(friency_axis,ceps_base_show,'r','LineWidth',2.0);
 % scatter(b_val,b_loc,'k');
 ylabel('amplitude(db)');xlabel('Frequency(Hz)');
-title('750Hz fundamental frequency, Lfter order: 100','FontWeight','bold');
-hold off
+% title('750Hz fundamental frequency, Lfter order: 100','FontWeight','bold');
+% hold off
 
-% figure(4);
-% plot(friency_axis,verse_envelope,'k','LineWidth',2.0);
-% hold on
+figure(4);
+plot(vowel_filtered);
+hold on
 % scatter(v_val,v_loc,'k');
 % plot(friency_axis,verse_ceps_base,'r','LineWidth',2.0);
 % scatter(v_b_val,v_b_loc,'k');

@@ -3,6 +3,7 @@ function [left_sides,right_sides] = triangleSideDetecter(cepstrum,M,rah_num)
 left_sides = [];
 right_sides = [];
 max_rah_loc = M;
+pitch_period = M;
 
 for i=1:rah_num
     stamp = 1;
@@ -22,6 +23,7 @@ for i=1:rah_num
         end
     end
     cepstrum(left_sides(i):right_sides(i)) = 0;
+    cepstrum(1:i*pitch_period+floor(pitch_period/2)) = 0;
     [var_max_rah,max_rah_loc] = max(cepstrum(1:1000));
 end
 

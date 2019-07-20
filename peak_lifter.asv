@@ -39,7 +39,7 @@ spectrum_bla = getspectrum(vowel_blocked,Nframe,Nfft,'bla');
 env_cep_pool = [];
 env_DT_pool = [];
 
-for timestamp = 15000:441:23820
+for timestamp = 15000:200:22000
     vowel_slice = vowel_filtered(timestamp+1:timestamp+Nframe);
     spec_slice = getspectrum(vowel_slice,Nframe,Nfft,'bla');
 
@@ -91,9 +91,9 @@ global friency_axis;
 
 zero_boundry = floor(fs/1000);
 lifter = 30;
-len_constant = 120;
-len_damp = 0;
-rah_num = 4;
+len_constant = 100;
+len_damp = 50;
+rah_num = 2;
 
 win_clear_low = [zeros(1,zero_boundry+1) ones(1,Nfft-2*zero_boundry-1)...
     zeros(1,zero_boundry)];
