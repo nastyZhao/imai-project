@@ -1,4 +1,4 @@
-function [base_ceps,base_spec,base_env] = get_base_cepstrum(spectrum,nIter,M)
+function [peak_ceps,base_spec,base_env] = get_base_cepstrum(spectrum,nIter,M)
 
 Nfft = length(spectrum);
 w=ones(1,2*M+1);
@@ -8,7 +8,7 @@ cepstrum = real(ifft(spectrum'));
 cep_liftered = h.*cepstrum;
 envelope = real(fft(cep_liftered));
 
-iter_spec = min(spectrum',envelope);
+iter_spec = max(spectrum'-envelope,0);
 iter_env = envelope;
 
 for i=1:nIter
@@ -20,5 +20,7 @@ end
 base_spec = iter_spec;
 base_ceps = real(ifft(base_spec));
 base_env = iter_env;
+
+end
 
 end
