@@ -13,7 +13,7 @@ Nframe = 600;
 Nfft = 4096;
 nstart = 10000;
 %axis scaling%
-axis_length = 8000/(fs/Nfft);
+axis_length = 5000/(fs/Nfft);
 friency_axis = (1:axis_length);
 friency_axis = friency_axis(:)*(fs/Nfft);
   
@@ -45,12 +45,13 @@ else
     M = Period1;
 end
 
-M = 25;
+% M = 25;
 
-[sub_cep1,sub_spec1,sub_env1] = get_peak_cepstrum(spectrum_bla,Nfft,1,M);
+[sub_cep1,sub_spec1,sub_env1] = get_peak_cepstrum(spectrum_bla,Nfft,0,M);
 [sub_cep2,sub_spec2,sub_env2] = get_peak_cepstrum(spectrum_bla,Nfft,7,M);
-[sub_cep3,sub_spec3,sub_env3] = get_peak_cepstrum(spectrum_bla,Nfft,7,M);
-[sub_cep4,sub_spec4,sub_env4] = get_peak_cepstrum(spectrum_bla,Nfft,7,M);
+[sub_cep3,sub_spec3,sub_env3] = get_peak_cepstrum(spectrum_bla,Nfft,9,M);
+[sub_cep4,sub_spec4,sub_env4] = get_peak_cepstrum(spectrum_bla,Nfft,11,M);
+
 
 [base_ceps0,base_spec0,base_env0] = get_invertImai_peak(spectrum_bla,0,M);
 [base_ceps1,base_spec1,base_env1] = get_invertImai_peak(spectrum_bla,1,M);
@@ -60,17 +61,18 @@ M = 25;
 spec_overhar =  max(spectrum_bla'-base_env1,0);
 ceps_overhar = real(ifft(spec_overhar));
 
-delta1 = base_ceps1 - sub_cep1;
-delta2 = sub_cep1 - sub_cep2;
-% delta3 = (base_ceps2 - base_ceps1).^2;
-deltasum = delta1+delta2;
+delta1 = (sub_cep1 - sub_cep2).^2;
+delta2 = (sub_cep1 - sub_cep3).^2;
+delta3 = (sub_cep1 - sub_cep4).^2;
+deltasum = delta1+delta2+delta3;
 deltasum_show = deltasum;
+anti_delta = 0-deltasum;
 % deltasquare = deltasum.^2;
 % deldelta1 = delta1 - delta2;
 % deldelta2 = delta2 - delta3;
 % sub_cep_middle = 0.5*(0.5*(sub_cep1 + sub_cep2)+sub_cep1);
 
-rahNum = 2;
+rahNum = 15;
 deltasumCache = deltasum;
 deltasumCache(1:loc_P1+floor(loc_P1/2)) = 0;
 for i=1:rahNum-1
@@ -97,6 +99,8 @@ for i=1:rahNum
 end
    
 
+
+
 zero_boundry = floor(fs/1000);
 win_clear_low = [zeros(1,zero_boundry+1) ones(1,Nfft-2*zero_boundry-1)...
     zeros(1,zero_boundry)];
@@ -122,12 +126,12 @@ for i = 1:rah_num
     r_side = r_bonds(i);
     ceps_peak_subed(l_side:r_side)=...
         ceps_bla(l_side:r_side)'- ceps_overhar(l_side:r_side);
-    ceps_har(l_side:r_side) = sub_cep1(l_side:r_side);
+    ceps_har(l_side:r_side) = ceps_slice(l_side:r_side);
     l_mirror = Nfft - r_side + 1;
     r_mirror = Nfft - l_side + 1;
     ceps_peak_subed(l_mirror:r_mirror) = ceps_bla(l_mirror:r_mirror)'...
         -ceps_overhar(l_mirror:r_mirror);
-    ceps_har(l_mirror:r_mirror) = sub_cep1(l_mirror:r_mirror);
+    ceps_har(l_mirror:r_mirror) = ceps_slice(l_mirror:r_mirror);
 end
 
 spec_har = real(fft(ceps_har));
@@ -138,10 +142,10 @@ spec_ok = spectrum_bla - spec_har;
 
 
 figure(31)
-% plot(ceps_bla(1:300));
-plot(deltasum_show(1:300));
-hold on
+plot(deltasum_show(1:150));
 % plot(deltasum_show(1:300));
+hold on
+% plot(ceps_peak_subed(1:150));
 % plot(sub_cep2(1:300));
 % plot(sub_cep3(1:300));
 % plot(deltasum(1:300),'Linewidth',1.0);
@@ -154,9 +158,9 @@ hold off
 figure(1)
 plot(friency_axis,spectrum_bla(1:axis_length));
 hold on
-plot(friency_axis,sub_env1(1:axis_length));
-plot(friency_axis,sub_env2(1:axis_length),'Linewidth',1.0);
-plot(friency_axis,base_env1(1:axis_length),'Linewidth',1.0);
+plot(friency_axis,spec_subed(1:axis_length));
+% plot(friency_axis,sub_env2(1:axis_length),'Linewidth',1.0);
+% plot(friency_axis,sub_env3(1:axis_length),'Linewidth',1.0);
 % plot(friency_axis,sub_env4(1:axis_length),'Linewidth',1.0);
 
 hold off
