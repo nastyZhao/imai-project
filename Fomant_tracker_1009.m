@@ -8,7 +8,7 @@ global axis_length;
 global friency_axis;
 
 %% initial data settings
-[wave_origin,fs_origin] = audioread('..\data\CR_A_30HNR_JITTER\CR_A_750.wav');
+[wave_origin,fs_origin] = audioread('..\data\CR_A_30HNR_JITTER\CR_A_450.wav');
 % ..\data\20181009(SC VOWEL CLEAN)\SC_150.wav
 fs = 24000;
 vowel_resample=resample(wave_origin,fs,fs_origin);
@@ -36,7 +36,7 @@ for Iter = 1:20
     vowel_slice = vowel_filtered(nstart+Iter+1:nstart+Iter+Nframe);
 %     spec_slice = getspectrum(vowel_slice,Nframe,Nfft,'bla');
 % 
-    env_DP_slice = delta_cep_sub(vowel_slice,80,0);
+    env_DP_slice = delta_cep_sub(vowel_slice,85,0);
 %     [env_cep,cep_slice] = getcepstrum(spec_slice,M);
 %     
 %     env_cep_pool = [env_cep_pool,env_cep'];
@@ -149,6 +149,10 @@ while 1
     
     l_bond = loc_Rams(i)-10+loc_l_zeros(length(loc_l_zeros))-1;
     r_bond = loc_Rams(i)+loc_r_zeros(1)-1;
+%     if i == 1
+%         l_bond = l_bond - 2;
+%         r_bond = r_bond + 2;
+%     end
     
     l_mirror = Nfft - r_bond + 1;
     r_mirror = Nfft - l_bond + 1;

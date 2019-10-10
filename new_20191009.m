@@ -4,16 +4,16 @@ clear;
 % ..\data\CR_A_30HNR_JITTER\CR_A_750.wav
 % ..\data\yuke voice\YUKE_600.wav
 % ..\data\CR_A_30HNR_JITTER\CR_A_550.wav
-fs = 24000;
+fs = 20000;
 vowel_resample=resample(sidetest,fs,fs_origin);
 vowel_filtered=filter([1,-0.97],[1],vowel_resample);
 
 %FFT paramaters setting% 
-Nframe = 1100;
+Nframe = 600;
 Nfft = 4096;
 nstart = 10000;
 %axis scaling%
-axis_length = 8000/(fs/Nfft);
+axis_length = 5000/(fs/Nfft);
 friency_axis = (1:axis_length);
 friency_axis = friency_axis(:)*(fs/Nfft);
   
@@ -89,6 +89,11 @@ while 1
     
     l_bond = loc_Rams(i)-10+loc_l_zeros(length(loc_l_zeros))-1;
     r_bond = loc_Rams(i)+loc_r_zeros(1)-1;
+%     if i == 1
+%         l_bond = l_bond - 2;
+%         r_bond = r_bond + 2;
+%     end
+    
     
     l_mirror = Nfft - r_bond + 1;
     r_mirror = Nfft - l_bond + 1;
@@ -148,15 +153,15 @@ scatter(l_bonds,var_lbonds,'k');
 scatter(r_bonds,var_rbonds,'k');
 hold off
 
-figure(21)
-plot(friency_axis,spectrum_bla(1:axis_length));
+figure(71)
+plot(friency_axis,spectrum_bla(1:axis_length),'k');
 hold on
 plot(friency_axis,spec_subed(1:axis_length));
 plot(friency_axis,env_imai(1:axis_length),'Linewidth',1.0);
-plot(friency_axis,env_i_imai(1:axis_length),'Linewidth',1.0);
-plot(friency_axis,env_peak_final(1:axis_length),'Linewidth',1.0);
+% plot(friency_axis,env_i_imai(1:axis_length),'Linewidth',1.0);
+% plot(friency_axis,env_peak_final(1:axis_length),'Linewidth',1.0);
 hold off
 
-% figure(41)
-% plot(ceps_bla(1:600));
+figure(41)
+plot(ceps_bla(1:600));
 
