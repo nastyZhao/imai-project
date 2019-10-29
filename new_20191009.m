@@ -1,6 +1,6 @@
 clear;
 %% initial data settings
-[sidetest,fs_origin] = audioread('..\data\CR_A_30HNR_JITTER\CR_A_750.wav');
+[sidetest,fs_origin] = audioread('..\data\20181009(SC VOWEL CLEAN)\SC_350_clean.wav');
 % ..\data\CR_A_30HNR_JITTER\CR_A_750.wav
 % ..\data\yuke voice\YUKE_600.wav
 % ..\data\CR_A_30HNR_JITTER\CR_A_550.wav
@@ -41,6 +41,17 @@ M = low_boundry;
 [base_ceps1,base_spec1,base_env1] = get_invertImai_peak(spectrum_bla,1,M);
 [base_ceps2,base_spec2,base_env2] = get_invertImai_peak(spectrum_bla,2,M);
 [base_ceps3,base_spec3,base_env3] = get_invertImai_peak(spectrum_bla,3,M);
+[base_ceps4,base_spec4,base_env4] = get_invertImai_peak(spectrum_bla,4,M);
+
+figure(99)
+plot(friency_axis,spectrum_bla(1:axis_length),'Linewidth',1.0);
+hold on
+plot(friency_axis,base_env0(1:axis_length),'Linewidth',1.0);
+hold off
+figure(100)
+plot(friency_axis,base_spec0(1:axis_length),'Linewidth',1.0);
+figure(101)
+plot(base_ceps0(1:150));
 
 spec_overhar =  max(spectrum_bla'-base_env1,0);
 % spec_overhar =  max(spectrum_bla'-base_env2,0);
@@ -107,6 +118,7 @@ while 1
         -ceps_overhar(l_mirror:r_mirror);
 end
 spec_subed = real(fft(ceps_peak_subed));
+[base2_ceps,base2_spec,base2_env] = get_invertImai_peak(spec_subed',0,M);
 
 %% Envelope calculation
 lifter = 60;
@@ -120,8 +132,8 @@ env_ceplifter = real(fft(cep_subed_liftered));
 
 
 
-len_constant = 50;
-len_damp = 50;
+len_constant = 75;
+len_damp = 25;
 win_damp = window(@blackman,2*len_damp)';
 win_env = [ones(1,len_constant) win_damp(len_damp+1:2*len_damp)...
     zeros(1,Nfft-2*(len_constant+len_damp))...
@@ -129,6 +141,36 @@ win_env = [ones(1,len_constant) win_damp(len_damp+1:2*len_damp)...
 cep_peak_env = win_env.*ceps_peak_subed;
 env_peak_final = real(fft(cep_peak_env));
 
+env_pool = [];
+delta_pool = [];
+
+figure(91)
+% plot(friency_axis,spec_subed(1:axis_length),'k','Linewidth',2.0);
+
+hold on
+for k=10:10:100
+    len_constant = k;
+    len_damp = floor(k/4);
+    win_damp = window(@blackman,2*len_damp)';
+    win_env = [ones(1,len_constant) win_damp(len_damp+1:2*len_damp)...
+        zeros(1,Nfft-2*(len_constant+len_damp))...
+        win_damp(1:len_damp) ones(1,len_constant)];
+    cep_peak_env_slice = win_env.*ceps_peak_subed;
+    env_peak_final_slice = real(fft(cep_peak_env_slice));
+    env_pool = [env_pool;env_peak_final_slice];
+    
+    if(max(size(delta_pool))~=0)
+        delta_slice = env_peak_final_slice - env_last;
+    else
+        delta_slice = zeros(1,Nfft);
+    end
+    delta_pool = [delta_pool;delta_slice];
+    env_last = env_peak_final_slice;
+    plot(friency_axis,env_peak_final_slice(1:axis_length));
+end
+hold off
+env_mean = mean(env_pool,1); 
+delta_sum = sum(delta_pool);
 
 [cc,ee,env_imai] = get_peak_cepstrum(spec_subed',Nfft,3,lifter);
 [cc1,ee1,env_i_imai] = get_invertImai_peak(spec_subed',1,lifter);
@@ -154,14 +196,15 @@ scatter(r_bonds,var_rbonds,'k');
 hold off
 
 figure(71)
-plot(friency_axis,spectrum_bla(1:axis_length),'k');
-hold on
-plot(friency_axis,spec_subed(1:axis_length));
-plot(friency_axis,env_imai(1:axis_length),'Linewidth',1.0);
-% plot(friency_axis,env_i_imai(1:axis_length),'Linewidth',1.0);
-% plot(friency_axis,env_peak_final(1:axis_length),'Linewidth',1.0);
-hold off
+% plot(friency_axis,spectrum_bla(1:axis_length),'k');
 
+plot(friency_axis,spec_subed(1:axis_length),'Linewidth',1.0);
+hold on
+plot(friency_axis,base2_env(1:axis_length));
+plot(friency_axis,base2_spec(1:axis_length),'Linewidth',1.0);
+% plot(friency_axis,env_mean(1:axis_length),'Linewidth',1.0);
+hold off
+% 
 figure(41)
-plot(ceps_bla(1:600));
+plot(base2_ceps(1:600));
 

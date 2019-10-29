@@ -7,7 +7,7 @@ clear
 [whitevocal2,fs4] = audioread('..\data\20181009(SC VOWEL CLEAN)\whitevocal_SC.wav');
 
 fs_used = 44100;
-M = 120;
+M = 100;
 
 Nframe = 44100;
 Nfft = 4*Nframe;
@@ -68,20 +68,21 @@ transfer_spectrum_show = spectrum_whitevocal_show - spectrum_whitenoise_show;
 
 env_transfer = envelopes_whitevocal - envelopes_whitenoise;
 env_transfer_show = env_transfer(1:axis_length);
-[loc,val] = findpeaks(env_transfer_show);
-val = val(:)*(fs_used/Nfft);
+
 
 env_transfer2 = envelopes_whitevocal2 - envelopes_whitenoise2;
 env_transfer_show2 = env_transfer2(1:axis_length);
+[loc,val] = findpeaks(env_transfer_show2);
+val = val(:)*(fs_used/Nfft);
 
-inverse_transfer_show = 32 - env_transfer_show;
+inverse_transfer_show = 32 - env_transfer_show2;
 [v_loc,v_val] = findpeaks(inverse_transfer_show);
 v_val = v_val(:)*(fs_used/Nfft);
 
 figure(5);
 % plot(friency_axis,transfer_spectrum_show,'LineWidth',1.0);
 % hold on
-plot(friency_axis,env_transfer_show,'LineWidth',2.0);
+plot(friency_axis,env_transfer_show2,'LineWidth',2.0);
 % plot(friency_axis,env_transfer_show2,'LineWidth',3.0);
 % title('Transfer function');
 % scatter(val,loc,'k');
