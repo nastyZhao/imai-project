@@ -1,19 +1,20 @@
 clear;
 %% initial data settings
-[sidetest,fs_origin] = audioread('..\data\CR_A_30HNR_JITTER\CR_A_450.wav');
+[sidetest,fs_origin] = audioread('..\data\CR_A_30HNR_JITTER\CR_A_400.wav');
+% [sidetest,fs_origin] = audioread('..\data\CR_A_30HNR_JITTER\CR_A_350.wav');
 % ..\data\CR_A_30HNR_JITTER\CR_A_750.wav
 % ..\data\yuke voice\YUKE_600.wav
 % ..\data\CR_A_30HNR_JITTER\CR_A_550.wav
-fs = 15000;
+fs = 20000;
 vowel_resample=resample(sidetest,fs,fs_origin);
 vowel_filtered=filter([1,-0.97],[1],vowel_resample);
 
 %FFT paramaters setting% 
 Nframe = 600;
 Nfft = 4096;
-nstart = 27000;
+nstart = 15000;
 %axis scaling%
-axis_length = 6000/(fs/Nfft);
+axis_length = 8000/(fs/Nfft);
 friency_axis = (1:axis_length);
 friency_axis = friency_axis(:)*(fs/Nfft);
   
@@ -22,7 +23,7 @@ dip_pick_len = 6500/(fs/Nfft);
 
 %spectrum calculating%
 vowel_blocked = vowel_filtered(nstart+1:nstart+Nframe);
-spectrum_bla = getspectrum(vowel_blocked,Nframe,Nfft,'bla');
+spectrum_bla = getspectrum(vowel_blocked,Nframe,Nfft,'han');
 ceps_bla = real(ifft(spectrum_bla));
 
 %% Cepstrum Editor
@@ -89,15 +90,16 @@ while 1
 end
 
 [ceps_peak_subed,sp_subed,sp_delta] = ...
-    subtraction(ceps_bla,rah_used,l_bonds,r_bonds,Nfft,10,M);
+    subtraction(ceps_bla,rah_used,l_bonds,r_bonds,Nfft,20,M);
 spec_subed = real(fft(ceps_peak_subed));
+
 sp_sum = spec_subed + 4*sp_delta;
 
 %% Envelope calculation
 % [cc,ee,env_imai] = get_peak_cepstrum(spec_subed',Nfft,3,lifter);
 % [cc1,ee1,env_i_imai] = get_invertImai_peak(spec_subed',1,lifter);
-len_constant = 75;
-len_damp = 25;
+len_constant = 50;
+len_damp = 0;
 win_damp = window(@blackman,2*len_damp)';
 win_env = [ones(1,len_constant) win_damp(len_damp+1:2*len_damp)...
     zeros(1,Nfft-2*(len_constant+len_damp))...
@@ -105,32 +107,33 @@ win_env = [ones(1,len_constant) win_damp(len_damp+1:2*len_damp)...
 cep_peak_env = win_env.*ceps_peak_subed';
 env_peak_final = real(fft(cep_peak_env));
 
-[cc,ee,env_imai] = get_peak_cepstrum(spec_subed,Nfft,10,65);
+[cc,ee,env_imai] = get_peak_cepstrum(spectrum_bla,Nfft,30,27);
 
 %% Figures
 figure(31)
-plot(ceps_bla(1:120));
+plot(ceps_bla(1:300));
 hold on
 % plot(ceps_peak_subed(1:150));
-scatter(l_bonds(1:3),val_lbond(1:3),'k');
-scatter(r_bonds(1:3),val_rbond(1:3),'k');
-xlabel('Quefrency(samples)');
-ylabel('Amplitude');
+% scatter(l_bonds(1:3),val_lbond(1:3),'k');
+% scatter(r_bonds(1:3),val_rbond(1:3),'k');
+% xlabel('Quefrency(samples)');
+% ylabel('Amplitude');
 hold off
 
 figure(71)
-plot(friency_axis,spectrum_bla(1:axis_length),'k');
-hold on
+% plot(friency_axis,spectrum_bla(1:axis_length),'k');
 plot(friency_axis,spec_subed(1:axis_length),'Linewidth',1.0);
+hold on
+% plot(friency_axis,spec_subed(1:axis_length),'Linewidth',1.0);
 % plot(friency_axis,spec_subed2(1:axis_length));
-% plot(friency_axis,sp_sum(1:axis_length),'Linewidth',1.0);
-% plot(friency_axis,env_imai(1:axis_length),'Linewidth',2.0);
+% plot(friency_axis,env_imai(1:axis_length),'Linewidth',1.0);
+plot(friency_axis,env_peak_final(1:axis_length),'Linewidth',2.0);
 xlabel('Frequency(samples)');
 ylabel('Amplitude');
 hold off
 % 
-% figure(41)
-% plot(base2_ceps(1:600));
+figure(41)
+plot(friency_axis,env_imai(1:axis_length),'Linewidth',2.0);
 
 %% Subtraction Function
 function [cep_subed,sp_subed,sp_delta] = subtraction(ceps_raw,rah_num,l_bonds,r_bonds,Nfft,Iter,M)

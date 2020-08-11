@@ -29,7 +29,7 @@ frequency = (0:8191)*fs/16384;
 % [l_loc,l_val] = findpeaks(LPC_log_envelope);
 % l_val = l_val(:)*(fs/16384);
 
-p=12;
+p=20;
 env_LPC_pool = [];
 for timestamp = 1000:200:22000
     
@@ -46,6 +46,6 @@ env_LPC = mean(env_LPC_pool,2);
 l_val = l_val(:)*(fs/16384);
 
 figure(20);
-plot(friency_axis,spectrum_show,'color','k');
+plot(env_LPC,'color','k');
 ylabel('Amplitude(db)');
 xlabel('Frequency(Hz)');

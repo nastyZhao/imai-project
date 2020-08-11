@@ -88,8 +88,8 @@ for i=1:rahNum
 end
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[base_ceps1,base_spec1,base_env1] = get_base_cepstrum(spectrum_nut,Nfft,0,M);
-[base_ceps2,base_spec2,base_env2] = get_base_cepstrum(spectrum_nut,Nfft,1,M);
+[base_ceps1,base_spec1,base_env1] = get_base_cepstrum(spectrum_nut,0,M);
+[base_ceps2,base_spec2,base_env2] = get_base_cepstrum(spectrum_nut,1,M);
 base_env_middle =0.5*(0.5*(base_env1+base_env2)+base_env1); 
 base_spec_middle = max(base_spec1-base_env2,0);
 ceps_base_slice = real(ifft(base_spec_middle));
@@ -120,7 +120,7 @@ right_sides = [];
 var_l = [];
 var_r = [];
 
-rah_num = 1;
+rah_num = 4;
 for i=1:rah_num
     stamp = 1;
     side_l = max_rah_loc-1;
@@ -132,8 +132,8 @@ for i=1:rah_num
             left_sides = [left_sides,side_l-1];
             right_sides = [right_sides,side_r];
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            var_l = [var_l,ceps_narrow(side_l-1)];
-            var_r = [var_r,ceps_narrow(side_r)];
+            var_l = [var_l,deltasum(side_l-1)];
+            var_r = [var_r,deltasum(side_r)];
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             stamp = 0;
         else
@@ -147,10 +147,12 @@ for i=1:rah_num
     [var_max_rah,max_rah_loc] = max(ceps_clear_sqr(1:1000));
 end
 
+var_l = [];
+var_r = [];
 ceps_peak_subed = ceps_bla';
 for i = 1:rah_num
-%     val_l = [val_l,ceps_bla(left_sides(i))];
-%     val_r = [val_r,ceps_bla(right_sides(i))];
+    var_l = [var_l,deltasum(l_bonds(i))];
+    var_r = [var_r,deltasum(r_bonds(i))];
     l_side = l_bonds(i);
     r_side = r_bonds(i);
     ceps_peak_subed(l_side:r_side)=...
@@ -179,16 +181,16 @@ env_subed_final = real(fft(cep_subed_env));
 
 
 figure(31)
-% plot(ceps_narrow(1:300));
+plot(ceps_narrow(1:300));
 hold on
 % plot(sub_cep1(1:300));
 % plot(sub_cep2(1:300));
 % plot(sub_cep3(1:300));
 % plot(deltasum(1:300),'Linewidth',1.0);
-plot(deltasum(1:300));
+% plot(deltasum(1:300));
 % plot(delta3(1:300));
-% scatter(loc_delpeak,val_delpeak,'k');
-% scatter(right_sides,var_delpeak,'k');
+scatter(l_bonds,ceps_narrow(l_bonds),'k');
+scatter(r_bonds,ceps_narrow(r_bonds),'k');
 hold off
 
 figure(1)
@@ -199,6 +201,18 @@ plot(friency_axis,spec_subed(1:axis_length));
 
 hold off
 
-% figure(3)
-% plot(ceps_clear_sqr(1:200));
-% hold on
+figure(3)
+plot(deltasum(1:300));
+hold on
+% scatter(loc_delpeak,val_delpeak,'k');
+scatter(l_bonds,var_l,'k');
+scatter(r_bonds,var_r,'k');
+hold off
+
+figure(4)
+plot(sub_cep1(1:300));
+hold on
+% scatter(loc_delpeak,val_delpeak,'k');
+scatter(l_bonds,sub_cep1(l_bonds),'k');
+scatter(r_bonds,sub_cep1(r_bonds),'k');
+hold off
